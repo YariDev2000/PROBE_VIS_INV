@@ -1,0 +1,70 @@
+<script>
+  
+  window.addEventListener('load', buscarDatos);
+
+  window.addEventListener("input", onInputChange);
+
+  function buscarDatos() {
+    google.script.run
+    .withSuccessHandler(dataUsuarios => {
+      let tableBody = document.getElementById("tableBody-usuarios");
+      var template = document.getElementById("rowTemplate");
+      var templateContent = template.content;
+
+      dataUsuarios.forEach(usuario => {
+        const tr = templateContent.cloneNode(true);
+
+        const nombre = tr.querySelector(".template-nombre");
+        const fecha = tr.querySelector(".template-fecha");
+        const turno = tr.querySelector(".template-turno");
+        const curso = tr.querySelector(".template-curso");
+        const lugar = tr.querySelector(".template-lugar");
+        const region = tr.querySelector(".template-region");
+        const modalidad = tr.querySelector(".template-modalidad");
+
+        nombre.textContent = usuario[0];
+        fecha.textContent = usuario[1];
+        turno.textContent = usuario[3];
+        curso.textContent = usuario[4];
+        lugar.textContent = usuario[5];
+        region.textContent = usuario[6];
+        modalidad.textContent = usuario[7];
+
+        tableBody.appendChild(tr);
+      })
+    })
+    .readUsers();
+  }
+
+  function onInputChange() {
+    let inputTextDescripcion = document.getElementById("buscarDescripcion").value.toString().toLowerCase();
+    let inputTextUbicacion = document.getElementById("buscarUbicacion").value.toString().toLowerCase();
+    let inputTextTipo = document.getElementById("buscarTipo").value.toString().toLowerCase();
+
+    let tableBody = document.getElementById("tableBody-usuarios");
+    let tableRows = tableBody.getElementsByTagName("tr");
+
+    /*console.log(tableRows);*/
+    for (let i = 0; i < tableRows.length; i++) {
+      /*console.log(tableRows[i].cells[1].textContent);*/
+      
+      let textoConsultaDescripcion = tableRows[i].cells[0].textContent.toString().toLowerCase();
+      let textoConsultaUbicacion = tableRows[i].cells[1].textContent.toString().toLowerCase();
+      let textoConsultaTipo = tableRows[i].cells[6].textContent.toString().toLowerCase();
+
+      if(textoConsultaDescripcion.indexOf(inputTextDescripcion) === -1) {
+        tableRows[i].style.visibility = "collapse";
+      }
+      else if(textoConsultaUbicacion.indexOf(inputTextUbicacion) === -1) {
+        tableRows[i].style.visibility = "collapse";
+      }
+      else if(textoConsultaTipo.indexOf(inputTextTipo) === -1) {
+        tableRows[i].style.visibility = "collapse";
+      }
+      else {
+        tableRows[i].style.visibility = "";
+      }
+    }
+  }
+
+</script>
